@@ -1,7 +1,5 @@
 import { createContext, useState, useEffect } from 'react';
-import axios from 'axios';
-
-const API_URL = 'http://localhost:5000/api/auth';
+import api from '../api';
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -14,9 +12,7 @@ export const AuthProvider = ({ children }) => {
       const storedToken = localStorage.getItem('token');
       if (storedToken) {
         try {
-          const res = await axios.get(`${API_URL}/me`, {
-            headers: { Authorization: `Bearer ${storedToken}` }
-          });
+          const res = await api.get('/auth/me');
           setUser({ ...res.data, token: storedToken });
         } catch (error) {
           console.error("Token invalid or expired", error);
@@ -31,7 +27,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const res = await axios.post(`${API_URL}/login`, { email, password });
+      const res = await api.post('/auth/login', { email, password });
       if (res.data && res.data.token) {
         localStorage.setItem('token', res.data.token);
         setUser(res.data.user);
@@ -47,7 +43,7 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (name, email, password, role = 'analyst') => {
     try {
-      const res = await axios.post(`${API_URL}/register`, { name, email, password, role });
+      const res = await api.post('/auth/register', { name, email, password, role });
       if (res.data && res.data.token) {
         localStorage.setItem('token', res.data.token);
         setUser(res.data.user);

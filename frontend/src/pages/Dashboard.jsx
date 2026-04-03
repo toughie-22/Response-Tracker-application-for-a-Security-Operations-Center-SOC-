@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
 import IncidentForm from '../components/IncidentForm';
-import axios from 'axios';
+import api from '../api';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -17,10 +17,7 @@ const Dashboard = () => {
 
   const fetchIncidents = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const res = await axios.get('http://localhost:5000/api/incidents', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await api.get('/incidents');
       setIncidents(res.data.data);
     } catch (error) {
       console.error("Error fetching incidents", error);
@@ -36,12 +33,7 @@ const Dashboard = () => {
   const handleStatusChange = async (id, newStatus) => {
     setUpdatingId(id);
     try {
-      const token = localStorage.getItem('token');
-      await axios.put(
-        `http://localhost:5000/api/incidents/${id}`,
-        { status: newStatus },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      await api.put(`/incidents/${id}`, { status: newStatus });
       // Update local state smoothly
       setIncidents(incidents.map(inc => 
         inc._id === id ? { ...inc, status: newStatus } : inc
@@ -57,10 +49,7 @@ const Dashboard = () => {
     if (!window.confirm("CONFIRM DELETION: Are you sure you want to permanently erase this incident log?")) return;
     
     try {
-      const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:5000/api/incidents/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await api.delete(`/incidents/${id}`);
       setIncidents(incidents.filter(inc => inc._id !== id));
     } catch (error) {
       alert(error.response?.data?.message || "Failed to delete. You might not have Admin privileges.");

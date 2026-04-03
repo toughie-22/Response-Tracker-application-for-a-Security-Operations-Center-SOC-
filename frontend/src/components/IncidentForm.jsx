@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import axios from 'axios';
+import api from '../api';
 
 const IncidentForm = ({ onClose, onIncidentAdded }) => {
   const [title, setTitle] = useState('');
@@ -14,12 +14,7 @@ const IncidentForm = ({ onClose, onIncidentAdded }) => {
     setError('');
 
     try {
-      const token = localStorage.getItem('token');
-      const res = await axios.post(
-        'http://localhost:5000/api/incidents',
-        { title, description, severity },
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
+      const res = await api.post('/incidents', { title, description, severity });
       
       onIncidentAdded(res.data.data);
       onClose();
