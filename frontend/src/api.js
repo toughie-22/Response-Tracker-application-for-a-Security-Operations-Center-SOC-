@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api'
+  baseURL: 'https://response-tracker-application-for-a.onrender.com/api'
 });
 
 // Configure Axios to automatically attach the token to every request
